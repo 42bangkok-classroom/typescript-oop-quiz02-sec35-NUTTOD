@@ -17,24 +17,24 @@ export const getEdgePosts = async (): Promise<EdgePost[]> => {
     const url = 'https://jsonplaceholder.typicode.com/posts';
     const { data } = await axios.get<Post[]>(url);
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
       return [];
     }
 
-    const rawEdgePosts = [data[0], data[data.length - 1]];
+    const firstPost = data[0];
+    const lastPost = data[data.length - 1];
 
-    const result: EdgePost[] = rawEdgePosts.map((post) => ({
+    const result: EdgePost[] = [firstPost, lastPost].map((post) => ({
       id: post.id,
       title: post.title,
     }));
 
-    return result;
+    return result; 
 
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(`API Error: ${error.message}`);
-    } else {
-      throw error;
+        throw new Error(error.message);
     }
+    throw error;
   }
 };
