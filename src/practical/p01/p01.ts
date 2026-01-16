@@ -29,11 +29,11 @@ export const getEdgePosts = async (): Promise<EdgePost[]> => {
       title: post.title,
     }));
 
-    return result; 
+    return result;
 
   } catch (error) {
     if (axios.isAxiosError(error)) {
-        throw new Error(error.message);
+        throw new Error(`API Error: ${error.message}`);
     }
     throw error;
   }
