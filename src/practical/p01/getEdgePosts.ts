@@ -1,27 +1,40 @@
 import axios from 'axios';
 
-async function getEdgePosts(): Promise<{ id: number; title: string }[]> {
-  try {
-    const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-    const posts = response.data;
-    if (posts.length === 0) {
-      return [];
-    } else if (posts.length === 1) {
-      return [
-        { id: posts[0].id, title: posts[0].title },
-        { id: posts[0].id, title: posts[0].title }
-      ];
-    } else {
-      return [
-        { id: posts[0].id, title: posts[0].title },
-        { id: posts.at(-1).id, title: posts.at(-1).title }
-      ];
-    }
-  } catch (error) {
-    throw error;
-  }
+interface Post {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
 }
 
-(async () => {
-  console.log(JSON.stringify(await getEdgePosts(), null, 2));
-})();
+interface EdgePost {
+  id: number;
+  title: string;
+}
+
+export const getEdgePosts = async (): Promise<EdgePost[]> => {
+  try {
+    const url = 'https://jsonplaceholder.typicode.com/posts';
+    const { data } = await axios.get<Post[]>(url);
+
+    if (data.length === 0) {
+      return [];
+    }
+
+    const rawEdgePosts = [data[0], data[data.length - 1]];
+
+    const result: EdgePost[] = rawEdgePosts.map((post) => ({
+      id: post.id,
+      title: post.title,
+    }));
+
+    return result;
+
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`API Error: ${error.message}`);
+    } else {
+      throw error;
+    }
+  }
+};
