@@ -1,14 +1,36 @@
-import { getEdgePosts } from './p01';
+import axios from 'axios';
 
-(async () => {
+interface ApiPost {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+}
+
+interface EdgePost {
+  id: number;
+  title: string;
+}
+
+export const getEdgePosts = async (): Promise<EdgePost[]> => {
   try {
-    console.log("Fetching data...");
-    
-    const result = await getEdgePosts();
+    const url = 'https://jsonplaceholder.typicode.com/posts';
+    const { data } = await axios.get<ApiPost[]>(url);
 
-    console.log("Result:", JSON.stringify(result, null, 2));
-    
+    if (!data || data.length === 0) {
+      return [];
+    }
+
+    const firstPost = data[0];
+    const lastPost = data[data.length - 1];
+    const edges = [firstPost, lastPost];
+
+    return edges.map(({ id, title }) => ({
+      id,
+      title
+    }));
+
   } catch (error) {
-    console.error("Error:", error);
+    throw error;
   }
-})();
+};
