@@ -1,11 +1,4 @@
-import axios from 'axios';
-
-interface Post {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
-}
+import axios from "axios";
 
 interface EdgePost {
   id: number;
@@ -14,8 +7,8 @@ interface EdgePost {
 
 export const getEdgePosts = async (): Promise<EdgePost[]> => {
   try {
-    const url = 'https://jsonplaceholder.typicode.com/posts';
-    const { data } = await axios.get<Post[]>(url);
+    const url = "https://jsonplaceholder.typicode.com/posts";
+    const { data } = await axios.get(url);
 
     if (!data || data.length === 0) {
       return [];
@@ -24,17 +17,14 @@ export const getEdgePosts = async (): Promise<EdgePost[]> => {
     const firstPost = data[0];
     const lastPost = data[data.length - 1];
 
-    const result: EdgePost[] = [firstPost, lastPost].map((post) => ({
-      id: post.id,
-      title: post.title,
-    }));
+    const result: EdgePost[] = [
+      { id: firstPost.id, title: firstPost.title },
+      { id: lastPost.id, title: lastPost.title },
+    ];
 
-    return result;
+    return result; 
 
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-        throw new Error(`API Error: ${error.message}`);
-    }
     throw error;
   }
 };
