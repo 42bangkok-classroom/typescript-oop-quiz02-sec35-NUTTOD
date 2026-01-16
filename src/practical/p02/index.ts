@@ -7,19 +7,19 @@ interface ApiPost {
   body: string;
 }
 
-interface EdgePost {
+interface PostResult {
   id: number;
   title: string;
 }
 
-export const getEdgePosts = async (id: number): Promise<EdgePost[]> => {
+export const getPostsByUser = async (userId: number): Promise<PostResult[]> => {
   try {
     const url = 'https://jsonplaceholder.typicode.com/posts';
     const { data } = await axios.get<ApiPost[]>(url);
 
     return data
-      .filter((post) => post.id === id)
-      .map(({id, title}) => ({
+      .filter((post) => post.userId === userId)
+      .map(({ id, title }) => ({
         id,
         title
       }));
